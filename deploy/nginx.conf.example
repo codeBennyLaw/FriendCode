@@ -1,0 +1,22 @@
+# HTTPS server block fragment. Replace the example domain and certificate paths.
+server {
+    listen 443 ssl;
+    server_name friends.example.com;
+    ssl_certificate     /path/to/fullchain.pem;
+    ssl_certificate_key /path/to/privkey.pem;
+    client_max_body_size 16k;
+
+    # Route everything through Node. Never expose the project/data directory.
+    location / {
+        proxy_pass http://127.0.0.1:3000;
+        proxy_http_version 1.1;
+        proxy_set_header Host $http_host;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        # Overwrite, do not append to a client-supplied X-Forwarded-For.
+        proxy_set_header X-Forwarded-For $remote_addr;
+        proxy_read_timeout 30s;
+    }
+}
+
+# For subpath deployments, set BASE_PATH in the private environment and
+# use location /friendcode/ with the same proxy_pass (no URI suffix).

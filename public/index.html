@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <base href="__BASE_PATH__/" />
+  <meta name="referrer" content="no-referrer" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>音游好友码平台 · FriendCode</title>
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+  <div class="bg-grid" aria-hidden="true"></div>
+  <div class="bg-glow" aria-hidden="true"></div>
+  <div class="bg-bars" aria-hidden="true"></div>
+
+  <header class="topbar">
+    <div class="brand">
+      <span class="logo">🎵</span>
+      <div class="brand-text">
+        <h1>音游好友码平台</h1>
+        <p>群友之间，轻松互加</p>
+      </div>
+    </div>
+    <div class="account" id="accountArea"></div>
+  </header>
+
+  <main class="container">
+    <p id="statusBanner" class="status-banner" role="status" aria-live="polite" hidden></p>
+    <section class="stats" id="statsBar"></section>
+
+    <section class="filters">
+      <div class="search-row">
+        <div class="search-wrap">
+          <input
+            type="text"
+            id="searchInput"
+            class="search-input"
+            name="fc-search-query"
+            placeholder="搜索 QQ 号 / 昵称 / 游戏 / 服务器"
+            autocomplete="off"
+            autocapitalize="off"
+            autocorrect="off"
+            spellcheck="false"
+            readonly
+          />
+          <button type="button" class="search-clear" id="searchClear" aria-label="清空搜索" hidden>×</button>
+        </div>
+        <div id="platformFilter"></div>
+        <button class="btn" id="resetBtn">重置</button>
+      </div>
+
+      <div class="tag-block">
+        <div class="tag-label">按游戏筛选：</div>
+        <div class="tag-cloud" id="gameTags"></div>
+      </div>
+      <div class="tag-block">
+        <div class="tag-label">按服务器筛选：</div>
+        <div class="tag-cloud" id="serverTags"></div>
+      </div>
+    </section>
+
+    <section class="actions">
+      <button class="btn btn-primary" id="addBtn">+ 添加我的好友码</button>
+      <div class="spacer"></div>
+    </section>
+
+    <section class="list" id="entryList"></section>
+    <p class="empty-hint" id="emptyHint" hidden>暂无匹配的好友码记录，换个筛选条件或先添加一条吧～</p>
+  </main>
+
+  <!-- 登录 -->
+  <div class="modal" id="loginModal" hidden>
+    <div class="modal-box">
+      <h2>登录</h2>
+      <label for="loginQq">QQ 号</label>
+      <input type="text" id="loginQq" autocomplete="username" maxlength="12" inputmode="numeric" placeholder="请输入QQ号" />
+      <label for="loginPwd">密码</label>
+      <input type="password" id="loginPwd" placeholder="请输入密码" autocomplete="current-password" maxlength="128" />
+      <div class="modal-actions">
+        <button class="btn" id="loginCancel">取消</button>
+        <button class="btn btn-primary" id="loginSubmit">登录</button>
+      </div>
+      <p class="modal-tip">忘记密码？请私聊站长，核对身份后重置。</p>
+      <p class="modal-error" id="loginError" hidden></p>
+    </div>
+  </div>
+
+  <!-- 注册 -->
+  <div class="modal" id="registerModal" hidden>
+    <div class="modal-box">
+      <h2>注册</h2>
+      <label for="regQq">QQ 号</label>
+      <input type="text" id="regQq" autocomplete="username" maxlength="12" inputmode="numeric" placeholder="请输入QQ号" />
+      <label for="regPwd">密码</label>
+      <input type="password" id="regPwd" placeholder="设置登录密码（8–128 位）" autocomplete="new-password" minlength="8" maxlength="128" />
+      <label for="regCode">验证码</label>
+      <input type="password" id="regCode" placeholder="请输入群验证码" autocomplete="off" />
+      <div class="modal-actions">
+        <button class="btn" id="regCancel">取消</button>
+        <button class="btn btn-primary" id="regSubmit">注册</button>
+      </div>
+      <p class="modal-error" id="regError" hidden></p>
+    </div>
+  </div>
+
+  <!-- 修改密码 -->
+  <div class="modal" id="pwdModal" hidden>
+    <div class="modal-box">
+      <h2>修改密码</h2>
+      <p id="pwdHint" class="modal-tip"></p>
+      <label for="pwdOld">当前密码</label>
+      <input type="password" id="pwdOld" placeholder="请输入当前密码" autocomplete="current-password" maxlength="128" />
+      <label for="pwdNew">新密码</label>
+      <input type="password" id="pwdNew" placeholder="设置新密码（8–128 位）" autocomplete="new-password" minlength="8" maxlength="128" />
+      <label for="pwdNew2">确认新密码</label>
+      <input type="password" id="pwdNew2" placeholder="再次输入新密码" autocomplete="new-password" minlength="8" maxlength="128" />
+      <div class="modal-actions">
+        <button class="btn" id="pwdCancel">取消</button>
+        <button class="btn" id="pwdLogout" hidden>退出登录</button>
+        <button class="btn btn-primary" id="pwdSubmit">保存</button>
+      </div>
+      <p class="modal-error" id="pwdError" hidden></p>
+    </div>
+  </div>
+
+  <!-- 删除验证 -->
+  <div class="modal" id="delModal" hidden>
+    <div class="modal-box">
+      <h2>删除确认</h2>
+      <p class="modal-tip">删除好友码为敏感操作，请输入当前账号密码确认。</p>
+      <label for="delPwd">密码</label>
+      <input type="password" id="delPwd" placeholder="请输入当前密码" autocomplete="current-password" maxlength="128" />
+      <div class="modal-actions">
+        <button class="btn" id="delCancel">取消</button>
+        <button class="btn btn-danger" id="delSubmit">确认删除</button>
+      </div>
+      <p class="modal-error" id="delError" hidden></p>
+    </div>
+  </div>
+
+  <!-- 个人主页 -->
+  <div class="modal" id="profileModal" hidden>
+    <div class="modal-box profile-box">
+      <button class="profile-close" id="profileClose" title="返回" aria-label="关闭个人主页">✕</button>
+      <div id="profileBody"></div>
+    </div>
+  </div>
+
+  <!-- 添加 / 编辑好友码 -->
+  <div class="modal" id="addModal" hidden>
+    <div class="modal-box">
+      <h2 id="addTitle">添加好友码</h2>
+      <label for="codeInput">好友码 / 好友ID / 对手码</label>
+      <input type="text" id="codeInput" maxlength="120" placeholder="填写游戏内的好友码" />
+
+      <label>音游</label>
+      <div id="gameSelect" aria-label="音游"></div>
+
+      <label>区域服务器</label>
+      <div id="serverSelect" aria-label="区域服务器"></div>
+
+      <label for="noteInput">备注（可选）</label>
+      <input type="text" id="noteInput" maxlength="300" placeholder="例如：常玩 Beyond，求互加~" />
+
+      <div class="modal-actions">
+        <button class="btn" id="addCancel">取消</button>
+        <button class="btn btn-primary" id="addSubmit">保存</button>
+      </div>
+      <p class="modal-error" id="addError" hidden></p>
+    </div>
+  </div>
+
+  <footer class="footer">
+    <p>FriendCode · 仅供群友交流</p>
+  </footer>
+
+  <script src="js/api.js"></script>
+  <script src="js/games.js"></script>
+  <script src="js/dragon-head.js"></script>
+  <script src="js/dragon-border.js"></script>
+  <script src="js/live-ui.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>

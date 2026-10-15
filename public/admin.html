@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <base href="__BASE_PATH__/" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="referrer" content="no-referrer" />
+  <title>站长后台 · FriendCode</title>
+  <link rel="stylesheet" href="css/style.css" />
+  <link rel="stylesheet" href="css/admin.css" />
+</head>
+<body>
+  <div class="bg-grid" aria-hidden="true"></div><div class="bg-glow" aria-hidden="true"></div>
+  <header class="topbar">
+    <div class="brand"><span class="admin-mark" aria-hidden="true">FC</span><div class="brand-text"><h1>站长后台</h1><p>成员管理与账号恢复</p></div></div>
+    <div class="account"><span id="ownerLabel"></span><a class="btn" href="./">返回好友码首页</a></div>
+  </header>
+  <main class="container admin-container">
+    <p id="adminStatus" class="status-banner" role="status" aria-live="polite">正在验证站长身份…</p>
+    <section id="accessDenied" class="admin-panel" hidden><h2>仅限站长访问</h2><p class="admin-muted">请先回到首页登录站长账号。普通成员没有后台权限。</p><a class="btn btn-primary" href="./">返回首页登录</a></section>
+    <div id="adminContent" hidden>
+      <section class="stats" aria-label="网站概况">
+        <div class="stat"><div id="memberCount" class="num">—</div><div class="lbl">普通成员</div></div>
+        <div class="stat"><div id="entryCount" class="num">—</div><div class="lbl">好友码记录</div></div>
+        <div class="stat"><div id="temporaryCount" class="num">—</div><div class="lbl">待修改临时密码</div></div>
+      </section>
+      <section class="admin-panel" aria-labelledby="inviteHeading">
+        <div class="admin-section-head"><div><h2 id="inviteHeading">群验证码</h2><p class="admin-muted">历史从首次初始化或升级时开始记录。更换后，旧码立即停止用于注册。</p></div><button class="btn btn-primary" id="openInviteDialog" type="button">更换验证码</button></div>
+        <div class="invite-current"><span class="admin-muted">当前有效验证码</span><code id="currentInviteCode">—</code><button class="btn" id="copyInviteCode" type="button">复制当前验证码</button></div>
+        <p id="currentInvitePeriod" class="admin-muted"></p>
+        <details class="invite-history"><summary>查看历史验证码与有效时间段</summary><div id="inviteHistory"></div></details>
+      </section>
+      <section class="admin-panel">
+        <div class="admin-section-head"><div><h2>群友账号</h2><p class="admin-muted">重置前请在群内或私聊中核对身份。不会修改昵称和好友码。</p></div><button class="btn" id="reloadUsers" type="button">刷新列表</button></div>
+        <label for="memberSearch">查找群友</label><input class="admin-search" id="memberSearch" type="search" placeholder="搜索 QQ 号或昵称" autocomplete="off" />
+        <p id="resultCount" class="admin-muted" aria-live="polite"></p>
+        <div id="memberList" class="member-list" aria-label="成员列表"></div>
+      </section>
+      <section class="admin-panel"><h2>最近的账号操作</h2><p class="admin-muted">只记录操作对象与时间，不记录密码。展示最近 50 条。</p><ol id="auditList" class="audit-list"></ol></section>
+    </div>
+  </main>
+  <dialog id="resetDialog" class="reset-dialog" aria-labelledby="resetTitle" aria-describedby="resetDescription">
+    <div class="reset-dialog-body"><h2 id="resetTitle">重置成员密码</h2><p id="resetTarget" class="reset-target"></p>
+      <p id="resetDescription" class="admin-muted">将生成随机临时密码，旧密码和所有登录会话会立即失效。群友下次登录必须修改密码。</p>
+      <p id="resetError" class="modal-error" role="alert" hidden></p>
+      <div id="resetConfirmation" class="modal-actions"><button class="btn" id="resetCancel" type="button">取消</button><button class="btn btn-danger" id="resetConfirm" type="button">确认重置</button></div>
+      <div id="resetResult" hidden>
+        <label for="temporaryPassword">新临时密码 · 仅本次显示</label><input id="temporaryPassword" class="temporary-password" type="text" readonly autocomplete="off" spellcheck="false" />
+        <p class="admin-muted">请通过私聊发给本人，不要发到群里。关闭后无法再次查看，但可以重新重置。</p>
+        <div class="modal-actions"><button class="btn" id="resetDone" type="button">已记下，关闭</button><button class="btn btn-primary" id="copyPassword" type="button">复制账号和临时密码</button></div>
+      </div>
+    </div>
+  </dialog>
+  <dialog id="inviteDialog" class="reset-dialog" aria-labelledby="inviteDialogTitle">
+    <div class="reset-dialog-body"><h2 id="inviteDialogTitle">更换群验证码</h2><p class="admin-muted">旧验证码立即失效，已注册成员不受影响。历史中会保留新旧验证码各自的生效时间。</p>
+      <label for="newInviteCode">新验证码（留空自动生成）</label><input id="newInviteCode" type="password" autocomplete="off" maxlength="128" placeholder="8–128 位，或留空生成随机码" />
+      <p id="inviteError" class="modal-error" role="alert" hidden></p><div class="modal-actions"><button class="btn" id="inviteCancel" type="button">取消</button><button class="btn btn-primary" id="inviteConfirm" type="button">确认更换</button></div>
+    </div>
+  </dialog>
+  <script src="js/api.js"></script><script src="js/admin.js"></script>
+</body>
+</html>
